@@ -1,23 +1,50 @@
-    F Fourmis (variable) -> nombre entier
-    Les salles sont:
+(Ceci n'est pas un exercice? Ceci n'est pas une Pipe? Magrite?)
+
+\(")/
+-( )-     ANT AND THE ANTHILL
+/(_)\
+
+    1 - Etablir le Graphe communiqué pour la fourmilière, Connexe? Non connexe? Orientée? Non orientée?
+    Une fois établit le modéliser au travers de matplotlib ou voir Seaborn.
+    La fourmilière étant idéalement représenté par un Graphe dense doit être materialisé par une matrice et non une liste
+    Pondération? si oui pour chaque arc entre les différents sommets (salles) les pondérations apparaitrons 
+    dans une matrice n * n sommets (salle).
+    Si pas de pondération matrice de type booléenne 1 ou 0 pour présence d'arête ou non.
+  
+    2 - Etablir l'algorithme le plus approprié pour un déplacement des fourmis... Solution potentiel:
+    Modéliser un arbre couvrant de taille minimum? -> maybe overkill revoir cours arbre couvrant de taille minimum
+    Voir potentiel algorithme minimisant le chemin vers dortoire? BFS?
+    Si graphe connexe après BFS obtention d'un arbre couvrant -> BFS?
+    Voir si graphe pondéré relire l'énoncé...
+    DFS non opti à première vue (à vérifié)
+    Etablir le schéma de déplacement des fourmis comme indiqué dans l'énoncé avec des print de  +++ EX +++
+
+    3 - Afficher Graphiquement le déplacement des fourmis dans la fourmilière étape par étape?
+    Pygame?
+    Affichage console par exec py file.py?
+    A éxplorer.
+
+------------------------------------------------------RECAP énoncé-------------------------------------------
+    F Fourmis (variable) -> nombre entier 
+    Les salles sont les sommets du graphe
     Le vestibule: Sv (Contient toute les fourmis de départ)
-    Le dortoir: Sd (Peux contenir toute les fourmis )
-    Les salles intermediaire S1 S2... pouvant acccueilir une seule fourmis
+    Le dortoir: Sd (Peux contenir toutes les fourmis )
+    Les salles intermediaires S1 S2... pouvant acccueilir une seule fourmis
 
     TOUTES les fourmis F se trouvent dans le vestibule Sv
     TOUTES les fourmis F doivent rejoindre le dortoir Sd
 
     CONTRAINTES:
-    Les fourmis se déplaceent à la même vitesse
-    Les salles de la fourmiière ne peuvent accueillir qu'une seule fourmi à la fois (en
-    dehors du vestibule et du dortoir) sauf si spécifié autrement.
+    Les fourmis se déplaceent à la même vitesse.
+    Les salles de la fourmiière ne peuvent accueillir qu'une seule fourmi à la fois 
+    (en dehors du vestibule et du dortoir) sauf si spécifié autrement.
     Une fourmi ne peut s'engager dans un tunnel que si la salle de destination est vide ou si la fourmi
     qui l'occupe est entrain de partir.
-    Les tunnels sont traversé instantanément par les fourmis
+    Les tunnels sont traversé instantanément par les fourmis (comme des portes)
 
     L'integralié des fourmis doivent rejoindre le dortoir en un minimum d'étape, Lors d'une étape une fourmi peut:
-    Attendre dans la salle
-    Se déplacer dans la salle
+    -Attendre dans la salle
+    -Se déplacer dans la salle
 
     Les étapes doivent apparaitres comme suis:
     +++ E1 +++
