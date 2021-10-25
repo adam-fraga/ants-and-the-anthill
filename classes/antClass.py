@@ -1,3 +1,6 @@
+import sys
+
+
 """
     Class fourmis/ Ant Class
 """
