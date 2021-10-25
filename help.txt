@@ -1,28 +1,28 @@
-(Ceci n'est pas un exercice? Ceci n'est pas une Pipe? Magrite?)
+    \(")/
+    -( )-  ANT AND THE ANTHILL
+    /(_)\
 
-\(")/
--( )-     ANT AND THE ANTHILL
-/(_)\
+    1 - Fourmilière I
+    
+    A - Représentation de la fourmilière:
 
-    1 - Etablir le Graphe communiqué pour la fourmilière, Connexe? Non connexe? Orientée? Non orientée?
-    Une fois établit le modéliser au travers de matplotlib ou voir Seaborn.
-    La fourmilière étant idéalement représenté par un Graphe dense doit être materialisé par une matrice et non une liste
-    Pondération? si oui pour chaque arc entre les différents sommets (salles) les pondérations apparaitrons 
-    dans une matrice n * n sommets (salle).
-    Si pas de pondération matrice de type booléenne 1 ou 0 pour présence d'arête ou non.
+    Graphe = Connexe = Arbre
+    S1 S2 SV et SD = 4 sommets (verticles)
+    On sait que S1-SV, S1-S2, S2-SD = 4 arête (edges)
+    Donc Fourmilière = Matrice de 4 * 4 de type booléenne avec 0 si pas de chemin entre les salles ou 1 si chemin éxiste
+    Représenter la matrice de la fourmilière avec Matplotlib ou Seaborn
   
-    2 - Etablir l'algorithme le plus approprié pour un déplacement des fourmis... Solution potentiel:
-    Modéliser un arbre couvrant de taille minimum? -> maybe overkill revoir cours arbre couvrant de taille minimum
-    Voir potentiel algorithme minimisant le chemin vers dortoire? BFS?
-    Si graphe connexe après BFS obtention d'un arbre couvrant -> BFS?
-    Voir si graphe pondéré relire l'énoncé...
-    DFS non opti à première vue (à vérifié)
-    Etablir le schéma de déplacement des fourmis comme indiqué dans l'énoncé avec des print de  +++ EX +++
+    B - Afficher l'ensemble des étapes nécessaires au déplacement des fourmis.
 
-    3 - Afficher Graphiquement le déplacement des fourmis dans la fourmilière étape par étape?
-    Pygame?
-    Affichage console par exec py file.py?
-    A éxplorer.
+    First: Exploration de la fourmilière(Matrice) et définition des différentes caracteristique des salles & chemin
+    Une bonne compréhension de la representation du Graphe avec Matplotlib peut aider à mieux comprendre le rapport
+    Graphe -> Matrice
+
+    Second: Après la génération de la foumilière ainsi que des différentes contraintes lié à celle ci, établir l'algorithme
+    qui permettra le parcourt de cette même fourmilière avec les contraintes de nombre lié aux fourmis.
+
+    C - Afficher Graphiquement le déplacement des fourmis dans la fourmilière étape par étape?
+    Network X -> Voir si le temps avec Pygame
 
 ------------------------------------------------------RECAP énoncé-------------------------------------------
     F Fourmis (variable) -> nombre entier 
