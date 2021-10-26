@@ -1,4 +1,5 @@
 import numpy as np
+import copy as cp
 import re
 
 
@@ -18,24 +19,25 @@ class AntHill:
 
         self.antHillMatrice = []
         self.antHillFile = anthillDotTxt
-        self.totalRoom = None
+        self.totalRooms = None
         self.totalAnt = None
-        self.totalDoors = None
+        self.totalTunnels = None
         self.rooms = None
-        self.relations = None
+        self.tunnels = None
 
         """
-            Fonction appelé dans le constructeur permet de récupérer les éléments:
+            Fonction de nettoyage des données appelée dans le constructeur permet de récupérer les éléments:
             - Nombre de fourmis
             - Salles de la fourmilière
-            - Relations entre les différentes salles de la fourmilière
+            - Tunnels entre les différentes salles de la fourmilière )
             Et de les set dynamiquement dans les attributs de la fourmilière
+            (Clean Data)
         """
         def set_hill():
 
             file = re.split('\n', self.antHillFile)
             rooms = []
-            relations = []
+            tunnels = []
 
             # Récupère le nombre de fourmis et retire la ligne correspondante
             if file[0][0] == "F":
@@ -45,22 +47,31 @@ class AntHill:
                 self.totalAnt = int(file[0].removeprefix("f="))
                 file.pop(0)
 
-            # Récupère le nombre de salle ainsi que leurs emplacements dans un tableau
-            # Récupère le nombre de porte/chemin/relations entre les salles dans un tableau
+            # La salle 0 correspond au vestibule
+            rooms.append(0)
             for el in file:
                 if len(el) == 2 or len(el) == 3 or "{" in el or "}" in el:
+                    el = re.sub("S|}|", "", el)
+                    el = re.sub(" ", "", el)
+                    el = re.sub("{", ", ", el)
                     rooms.append(el)
+            # Récupère le nombre de tunnels/relations entre les salles dans un tableau
                 else:
-                    relations.append(el)
-
-            # Set les différentes relations entre les salles dans un tableau
+                    tunnels.append(el)
+            # Après avoir ajouté toute les salle ajoute une salle en plus dynamiquement correspondant au dortoir
+            rooms.append(len(rooms) + 1)
+            # Set le nombre de salles (sommets du graphe)
+            self.totalRooms = len(rooms)
+            # Chemins/porte (arête du graphe)
+            self.totalTunnels = len(tunnels)
             # Set les différentes salles ainsi que leurs emplacement dans un tableau
-            # Set le nombre de salles (sommets du graphe) et chemins/porte (arête du graphe)
-            self.totalRoom = len(rooms)
-            self.totalDoors = len(relations)
             self.rooms = rooms
-            self.relations = relations
+            # Set les différentes relations entre les salles dans un tableau
+            self.tunnels = tunnels
 
+        """
+            Execute les fonctions de nettoyage des données dans le constructeur et initialise la fourmilière.
+        """
         set_hill()
 
     """
@@ -69,10 +80,23 @@ class AntHill:
         (Taille salle * salle) (0 ou un suivant les connexions entre les salles)
     """
     def set_anthill_matrice(self):
+        # Tableau de tuple chaque tuple materialise la liaison entre 2 salles
+        neighbors = []
+        # Tuple contenant les 2 cases voisines
+        pair = ()
+
         # Créer une matrice de salle * salle rempli de zero
-        self.antHillMatrice = np.zeros((self.totalRoom, self.totalRoom))
-        # Trouver un moyen d'initialiser la matrice booléene en exploitant le tableau des realtions entre les salles
-        pass
+        self.antHillMatrice = np.zeros((self.totalRooms, self.totalRooms))
+
+        # Clean la liste des tunnel et remplace Sv par 0 et Sd par Nombre total de salle -1
+        for row in self.tunnels:
+            row = re.sub("S|-|", "", row)
+            row = re.sub("v", "0", row)
+            row = re.sub("d", str((self.totalRooms - 1)), row)
+            row = re.split(" ", row)
+            row.pop(1)
+            print("ROW", row)
+            for el in row:
 
     """
         Affiche la matrice représentative de la fourmilière
@@ -82,3 +106,32 @@ class AntHill:
         for row in self.antHillMatrice:
             print(row)
         print()
+
+    """
+        Affiche la liste des salles ainsi que leurs emplacements
+    """
+
+    def print_anthill_rooms(self):
+        print(f"Votre fourmiliere est composée de {self.totalRooms} salles (Vestibule et dortoir inclus). \n")
+        print("Liste des salles de la fourmilière:\n")
+        try:
+            for room in self.rooms:
+                print(room)
+        except Exception as e:
+            print("Impossible de trouver les salles de votre fourmilière.\n")
+            print(e)
+
+    """
+        Affiche les relations/tunnels entre les salles de la fourmilières
+        (Fonction de debogage permet de visualiser les relations entre les salles)
+    """
+
+    def print_anthill_tunnel(self):
+        print(f"Votre fourmiliere est composée de {self.totalTunnels} tunnels. \n")
+        print("Liste des tunnels de la fourmilière:")
+        try:
+            for tunnel in self.tunnels:
+                print(tunnel)
+        except Exception as e:
+            print("Impossible de trouver les salles de votre fourmilière")
+            print(e)

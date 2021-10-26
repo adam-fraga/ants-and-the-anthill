@@ -39,3 +39,7 @@ except Exception as e:
 hill.set_anthill_matrice()
 # Affiche la matrice de la fourmilière
 hill.print_anthill_matrice()
+# Affiche les information concernant les Salles de la foumilière
+hill.print_anthill_rooms()
+# Affiche les informations concernant les tunnels liant les salles de la foumilière
+hill.print_anthill_tunnel()
