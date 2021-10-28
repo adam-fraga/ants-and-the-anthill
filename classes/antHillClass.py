@@ -115,12 +115,14 @@ class AntHill:
                 for n in self.neighbors:
                     if x == n[0] and y == n[1]:
                         self.antHillMatrice[x][y] = 1
+        print("Félicitation! Votre fourmilière à bien été générée!")
 
     """
         Affiche la matrice représentative de la fourmilière
     """
     def print_anthill_matrice(self):
         print()
+        print("Matrice booléenne de la fourmilière")
         for row in self.antHillMatrice:
             print(row)
         print()
@@ -132,8 +134,8 @@ class AntHill:
     def print_anthill_rooms(self):
 
         print(f"\nVotre fourmiliere est composée de {self.totalAnt} individus. \n")
-        print(f"Votre fourmiliere est composée de {self.totalRooms} salles (Vestibule et dortoir inclus). \n")
-        print("Liste des salles de la fourmilière:\n")
+        print(f"Votre fourmiliere est composée de {self.totalRooms} salles.")
+        print("(Vestibule = 0, dortoire = dernière salle)")
         try:
             for room in self.rooms:
                 print(room)
@@ -158,8 +160,7 @@ class AntHill:
 
     """
         Affiche graphiquement les salles de la fourmilière et leurs différentes liaison
-        avec le module networkx
-
+        avec le module networkx et matplotlib
     """
     def draw_anthill(self):
         # Initialise le Graphe networkX

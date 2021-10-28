@@ -1,29 +1,23 @@
 import sys
 
+from numpy import ndarray
+
 
 """
-    Class fourmis/ Ant Class
+    Class Essaim contient une colonie de fourmis
 """
 
 
-class Ant:
+class swarm:
     """
-        Permet de créer une fourmis en lui attribuant en nom F1, F2 etc...
-        Pour la création de plusieurs foumis on préfèrera bouclé lors de l'instanciation
+        Constructeur de l'essaim de fourmis
     """
-    def __init__(self, id) -> None:
-        self.id = f"F{id}"
-        # Etat move (bool)
-        self.move = None
-        # Etat stay (bool)
-        self.stay = None
+    def __init__(self):
         pass
 
     """
-        Ajoute la fourmi dans le vestibule de la fourmilière
-        Voir si vestibule = dic ou list
+        Fonction de parcourt de la fourmilière, la fourmis cherche le chemin le plus rapide
+        pour aller jusqu'au dortoir.
     """
-
-    def goto_vestibule(self, vestibule: list or dict) -> None:
-        vestibule.append(self)
+    def dig_tunnel(self, M: ndarray) -> None:
         pass

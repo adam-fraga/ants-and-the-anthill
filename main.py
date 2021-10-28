@@ -28,23 +28,30 @@ fileName = str(input("Entrer le nom du fichier matérialisant les relations de v
 try:
     file = open(f"anthill/{fileName}", "r")
     strFile = file.read()
-    hill = AntHill(strFile)
-    print("Félicitation! Votre fourmilière à bien été générée!")
 except Exception as e:
     print("Le nom de votre fourmilière n'éxiste pas, Vérifier son ortographe ou sa présence dans le dossier \"anthill\"")
     print(e)
 
+# Init la fourmiliere
+hill = AntHill(strFile)
+# initialise une fourmis
+
 # Initialise les cellules voisine dans un tableau de tuples (int, int)
 hill.set_neighbors()
+
 # Initialise une matrice np rempli de zero
 hill.set_anthill_matrice()
-# Affiche la matrice de la fourmilière
-hill.print_anthill_matrice()
+
 # Affiche les information concernant les Salles de la foumilière
 hill.print_anthill_rooms()
+
 # Affiche les informations concernant les tunnels liant les salles de la foumilière
 hill.print_anthill_tunnel()
-# Réaffiche la matrice après initialisation des valeur booléene
+
+# Déssine les salles de la fourmilière ainsi que leur tunnels
+# hill.draw_anthill()
+
+# Affiche la matrice de la fourmilière
 hill.print_anthill_matrice()
-# Déssine les salles de la fourmilière ainsi que leur connexion
-hill.draw_anthill()
+
+
