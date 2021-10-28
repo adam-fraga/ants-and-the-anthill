@@ -1,5 +1,7 @@
 import numpy as np
 import copy as cp
+import matplotlib.pyplot as plt
+import networkx as nx
 import re
 
 
@@ -24,6 +26,7 @@ class AntHill:
         self.totalTunnels = None
         self.rooms = None
         self.tunnels = None
+        self.neighbors = []
 
         """
             Fonction de nettoyage des données appelée dans le constructeur permet de récupérer les éléments:
@@ -46,6 +49,10 @@ class AntHill:
             elif file[0][0] == "f":
                 self.totalAnt = int(file[0].removeprefix("f="))
                 file.pop(0)
+            # Condition permettant de palier au problème d'encodage du fichier en base 10 ajoute un
+            # Tableau suplémentaire vide en fin de fichier après nettoyage
+            if not file[-1]:
+                file.pop()
 
             # La salle 0 correspond au vestibule
             rooms.append(0)
@@ -75,19 +82,10 @@ class AntHill:
         set_hill()
 
     """
-        Définit la matrice booléenne représentative de la fourmilière en fonction du nombre
-        de salles et des différentes liaison entres elles.
-        (Taille salle * salle) (0 ou un suivant les connexions entre les salles)
+        Définit les cellules voisines dans un tableau de tuple(int, int), chaque tuple réference le lien entre deux salles
+        voisines
     """
-    def set_anthill_matrice(self):
-        # Tableau de tuple chaque tuple materialise la liaison entre 2 salles
-        neighbors = []
-        # Tuple contenant les 2 cases voisines
-        pair = ()
-
-        # Créer une matrice de salle * salle rempli de zero
-        self.antHillMatrice = np.zeros((self.totalRooms, self.totalRooms))
-
+    def set_neighbors(self):
         # Clean la liste des tunnel et remplace Sv par 0 et Sd par Nombre total de salle -1
         for row in self.tunnels:
             row = re.sub("S|-|", "", row)
@@ -95,8 +93,26 @@ class AntHill:
             row = re.sub("d", str((self.totalRooms - 1)), row)
             row = re.split(" ", row)
             row.pop(1)
-            print("ROW", row)
-            for el in row:
+            self.neighbors.append((int(row[0]), int(row[1])))
+
+    """
+        Initialise une matrice booléenne correspondant à la fourmilière passé en paramètre,
+        de salles * salles. (Correspond au graphe de la fourmilière sous forme de matrice)
+        Les 0 et 1 materialise les liaisons entre les salles 1 = salle connecté, 0 = Pas de connexion.
+    """
+    def set_anthill_matrice(self):
+        # Créer une matrice de salle * salle rempli de zero
+        self.antHillMatrice = np.zeros((self.totalRooms, self.totalRooms))
+
+        # Parcourt la matrice et initialise 1 si 2 salles sont voisine en vérifiant dans le
+        # Tableau de tuples initialiser au préalable (neighbors)
+        for x in range(self.totalRooms):
+            for y in range(self.totalRooms):
+                # print("x, y: ", (x, y))
+                # print("Position courante", self.antHillMatrice[x][y])
+                for n in self.neighbors:
+                    if x == n[0] and y == n[1]:
+                        self.antHillMatrice[x][y] = 1
 
     """
         Affiche la matrice représentative de la fourmilière
@@ -108,10 +124,12 @@ class AntHill:
         print()
 
     """
-        Affiche la liste des salles ainsi que leurs emplacements
+        Donne le nombre de fourmis, la liste des salles ainsi que leurs emplacements
     """
 
     def print_anthill_rooms(self):
+
+        print(f"\nVotre fourmiliere est composée de {self.totalAnt} individus. \n")
         print(f"Votre fourmiliere est composée de {self.totalRooms} salles (Vestibule et dortoir inclus). \n")
         print("Liste des salles de la fourmilière:\n")
         try:
@@ -135,3 +153,26 @@ class AntHill:
         except Exception as e:
             print("Impossible de trouver les salles de votre fourmilière")
             print(e)
+
+    """
+        Affiche graphiquement les salles de la fourmilière et leurs différentes liaison
+        avec le module networkx
+
+    """
+    def draw_anthill(self):
+        # Initialise le Graphe networkX
+        G = nx.Graph()
+        # Construit un iterable du nombre de salles incluant sv et sd
+        H = nx.path_graph(self.totalRooms)
+        print("H", H)
+        # Permet l'ajout dynamique de plusieurs noeuds dans le graphe nx
+        G.add_nodes_from(H)
+        # Le nettoyage de la liste de tuples contenu dans neighbors permet l'insertion de toutes les relations
+        # directement ddans la methode ci dessous.
+        G.add_edges_from(self.neighbors)
+
+        print(G)
+        print("VOISINES", self.neighbors)
+        print(G)
+
+    

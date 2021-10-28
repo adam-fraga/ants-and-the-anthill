@@ -4,7 +4,6 @@ import numpy as np
 from classes.antHillClass import AntHill
 from classes.antClass import Ant
 
-
 # Just for fun
 print(" \n\n Bienvenue dans votre générateur de fourmilière! \n\n")
 print("  \\(\")/", "  \\(\")/", "  \\(\")/")
@@ -35,6 +34,8 @@ except Exception as e:
     print("Le nom de votre fourmilière n'éxiste pas, Vérifier son ortographe ou sa présence dans le dossier \"anthill\"")
     print(e)
 
+# Initialise les cellules voisine dans un tableau de tuples (int, int)
+hill.set_neighbors()
 # Initialise une matrice np rempli de zero
 hill.set_anthill_matrice()
 # Affiche la matrice de la fourmilière
@@ -43,3 +44,7 @@ hill.print_anthill_matrice()
 hill.print_anthill_rooms()
 # Affiche les informations concernant les tunnels liant les salles de la foumilière
 hill.print_anthill_tunnel()
+# Réaffiche la matrice après initialisation des valeur booléene
+hill.print_anthill_matrice()
+# Déssine les salles de la fourmilière ainsi que leur connexion
+hill.draw_anthill()
