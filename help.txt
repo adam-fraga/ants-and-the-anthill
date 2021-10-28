@@ -51,3 +51,7 @@
     f1 - SV - S1
     +++ E2 ...
     ...
+
+    DISCOVER:
+    Il est possible de définir des attributs dans les verticles & edges avec le module network X
+    Voir pour materialiser dans la matrice -->

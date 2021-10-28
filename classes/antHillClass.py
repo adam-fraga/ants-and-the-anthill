@@ -1,3 +1,5 @@
+from ssl import Options
+from IPython.core.pylabtools import figsize
 import numpy as np
 import copy as cp
 import matplotlib.pyplot as plt
@@ -165,14 +167,20 @@ class AntHill:
         # Construit un iterable du nombre de salles incluant sv et sd
         H = nx.path_graph(self.totalRooms)
         print("H", H)
-        # Permet l'ajout dynamique de plusieurs noeuds dans le graphe nx
+        # Permet l'ajout dynamique de plusieurs noeuds (verticles) dans le graphe nx
         G.add_nodes_from(H)
         # Le nettoyage de la liste de tuples contenu dans neighbors permet l'insertion de toutes les relations
-        # directement ddans la methode ci dessous.
+        # (edges) directement dans la methode ci dessous.
         G.add_edges_from(self.neighbors)
 
-        print(G)
-        print("VOISINES", self.neighbors)
-        print(G)
+        # Choix du spring pour plus de visibilité et éviter les croisements entres les salles
+        plt.figure(figsize(10, 8))
 
-    
+        # Titre du graphique
+        plt.title("Représentation Graphique D'une fourmilière")
+
+        # Layout du graphique spring plus lisible pour fourmilière minimise les croisements et éparpille les salles
+        nx.draw_spring(G, with_labels=True)
+
+        # Affiche le graphique après execution de la console
+        plt.show()
