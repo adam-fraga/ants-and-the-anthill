@@ -68,19 +68,15 @@ class AntHill:
                     splitRoom = el.split(",")
                     # Si longueur du split est de 1 alors pas d'emplacement spécifier donc 1 (consigne)
                     if len(splitRoom) == 1:
-                        print("TEST", splitRoom)
                         self.rooms.append((int(splitRoom[0]), 1))
                     # Si emplacement len == 2 donc ajoute un tuple d'int (salle, emplacement)
                     else:
-                        print("SPLITED", splitRoom)
-                        print("TEST2", splitRoom[0], splitRoom[1])
                         self.rooms.append((int(splitRoom[0]), int(splitRoom[1])))
             # Si ce n'est pas une salle c'est un tunnel donc ajoute le tunnel dans un tableau
                 else:
                     self.tunnels.append(el)
             # Après avoir ajouté toutes les salles ajoute une salle en plus dynamiquement correspondante au dortoir
             self.rooms.append(len(self.rooms))
-            print("ROOMS", self.rooms)
             # Set le nombre de salles dans l'attribut totalRooms
             self.totalRooms = len(self.rooms)
             # Set le nombre total de tunnel dans l'attribut totalTunnels
@@ -110,17 +106,20 @@ class AntHill:
     """
 
     def set_anthill_graph(self):
-        # Construit un iterable du nombre de salles incluant sv et sd
-        H = nx.path_graph(self.totalRooms)
-
-        # Permet l'ajout dynamique de plusieurs noeuds (verticles) dans le graphe nx
-        self.antHillGraph.add_nodes_from(H)
+        # Itère sur la liste de tuple (room, emplacement)
+        for room in self.rooms:
+            # Si il s'agit du dortoit ou du vestibule ajoute simplement la salle dans un node ntwrkx
+            if room == 0 or room == (self.totalRooms - 1):
+                self.antHillGraph.add_node(room)
+            # Sinon ajoute un attribut slot materialisant le nombre de places disponibles dans chaque salle
+            else:
+                self.antHillGraph.add_node(room[0], slot=room[1])
 
         print("Liste des nodes", self.antHillGraph.nodes)
         print("Liste des rooms", self.rooms)
 
-        # Le nettoyage de la liste de tuples contenu dans neighbors permet l'insertion de toutes les relations
-        # (edges) directement dans la methode ci dessous.
+        # Neighbors contenant une liste de tuples qui materialise la relation entre les salles
+        # Passe cette liste à la methode suivante pour définir les edges.
         self.antHillGraph.add_edges_from(self.neighbors)
 
     """
