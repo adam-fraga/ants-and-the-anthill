@@ -2,7 +2,7 @@ import re
 import numpy as np
 
 from classes.antHillClass import AntHill
-from classes.antClass import Ant
+from classes.swarmClass import Swarm
 
 # Just for fun
 print(" \n\n Bienvenue dans votre générateur de fourmilière! \n\n")
@@ -34,24 +34,27 @@ except Exception as e:
 
 # Init la fourmiliere
 hill = AntHill(strFile)
-# initialise une fourmis
+
+# Initi de l'essaim de fourmis
+swarm = Swarm()
 
 # Initialise les cellules voisine dans un tableau de tuples (int, int)
 hill.set_neighbors()
 
-# Initialise une matrice np rempli de zero
+# Initialise une matrice booléenne représentative de la fourmiliere
 hill.set_anthill_matrice()
 
-# Affiche les information concernant les Salles de la foumilière
-hill.print_anthill_rooms()
-
-# Affiche les informations concernant les tunnels liant les salles de la foumilière
-hill.print_anthill_tunnel()
+# Initialise  un objet networkX representatif de la fourmilière
+hill.set_anthill_graph()
 
 # Déssine les salles de la fourmilière ainsi que leur tunnels
-# hill.draw_anthill()
+hill.draw_anthill()
+
+# Affiche les information concernant les Salles de la foumilière
+hill.print_anthill_data()
 
 # Affiche la matrice de la fourmilière
 hill.print_anthill_matrice()
 
-
+# Bfs
+swarm.get_fastest_way(hill.antHillMatrice, hill.antHillGraph)

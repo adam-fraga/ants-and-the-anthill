@@ -1,4 +1,3 @@
-from ssl import Options
 from IPython.core.pylabtools import figsize
 import numpy as np
 import copy as cp
@@ -22,6 +21,7 @@ class AntHill:
     def __init__(self, anthillDotTxt: str) -> None:
 
         self.antHillMatrice = []
+        self.antHillGraph = nx.Graph()
         self.antHillFile = anthillDotTxt
         self.totalRooms = None
         self.totalAnt = None
@@ -98,6 +98,21 @@ class AntHill:
             self.neighbors.append((int(row[0]), int(row[1])))
 
     """
+        Définit le graphe de la fourmiliere sous forme d'objet networkX
+    """
+
+    def set_anthill_graph(self):
+        # Construit un iterable du nombre de salles incluant sv et sd
+        H = nx.path_graph(self.totalRooms)
+
+        # Permet l'ajout dynamique de plusieurs noeuds (verticles) dans le graphe nx
+        self.antHillGraph.add_nodes_from(H)
+
+        # Le nettoyage de la liste de tuples contenu dans neighbors permet l'insertion de toutes les relations
+        # (edges) directement dans la methode ci dessous.
+        self.antHillGraph.add_edges_from(self.neighbors)
+
+    """
         Initialise une matrice booléenne correspondant à la fourmilière passé en paramètre,
         de salles * salles. (Correspond au graphe de la fourmilière sous forme de matrice)
         Les 0 et 1 materialise les liaisons entre les salles 1 = salle connecté, 0 = Pas de connexion.
@@ -116,9 +131,11 @@ class AntHill:
                     if x == n[0] and y == n[1]:
                         self.antHillMatrice[x][y] = 1
         print("Félicitation! Votre fourmilière à bien été générée!")
+        print("Presser une touche de votre clavier pour afficher le graphique de la fourmilière!")
+        input()
 
     """
-        Affiche la matrice représentative de la fourmilière
+        Affiche la matrice booléenne représentative de la fourmilière
     """
     def print_anthill_matrice(self):
         print()
@@ -127,61 +144,30 @@ class AntHill:
             print(row)
         print()
 
-    """
-        Donne le nombre de fourmis, la liste des salles ainsi que leurs emplacements
-    """
+        """
+            Affiche les informations de la fourmilière:
+            Nombre d'individus, nombre de salles et leurs emplacements, nombre de tunnel et leurs liaisons...
+        """
 
-    def print_anthill_rooms(self):
-
-        print(f"\nVotre fourmiliere est composée de {self.totalAnt} individus. \n")
-        print(f"Votre fourmiliere est composée de {self.totalRooms} salles.")
-        print("(Vestibule = 0, dortoire = dernière salle)")
-        try:
-            for room in self.rooms:
-                print(room)
-        except Exception as e:
-            print("Impossible de trouver les salles de votre fourmilière.\n")
-            print(e)
+    def print_anthill_data(self):
+        print(f"\nNombre de fourmis: {self.totalAnt}.")
+        print(f"\nNombre de salles et leurs emplacements {self.antHillGraph.nodes.data()}.")
+        print(f"\nNombre de tunnels {self.antHillGraph.edges}.")
+        print(f"\nListe des tunnels de la fourmilière: {self.antHillGraph.edges.data()}")
 
     """
-        Affiche les relations/tunnels entre les salles de la fourmilières
-        (Fonction de debogage permet de visualiser les relations entre les salles)
-    """
-
-    def print_anthill_tunnel(self):
-        print(f"Votre fourmiliere est composée de {self.totalTunnels} tunnels. \n")
-        print("Liste des tunnels de la fourmilière:")
-        try:
-            for tunnel in self.tunnels:
-                print(tunnel)
-        except Exception as e:
-            print("Impossible de trouver les salles de votre fourmilière")
-            print(e)
-
-    """
-        Affiche graphiquement les salles de la fourmilière et leurs différentes liaison
-        avec le module networkx et matplotlib
+        Représentation graphique de la fourmilière avec networkX et matplotlib
     """
     def draw_anthill(self):
-        # Initialise le Graphe networkX
-        G = nx.Graph()
-        # Construit un iterable du nombre de salles incluant sv et sd
-        H = nx.path_graph(self.totalRooms)
-        print("H", H)
-        # Permet l'ajout dynamique de plusieurs noeuds (verticles) dans le graphe nx
-        G.add_nodes_from(H)
-        # Le nettoyage de la liste de tuples contenu dans neighbors permet l'insertion de toutes les relations
-        # (edges) directement dans la methode ci dessous.
-        G.add_edges_from(self.neighbors)
 
-        # Choix du spring pour plus de visibilité et éviter les croisements entres les salles
+        # Choix du spring pour plus de visibilité (positionne les noeuds lié plus proche et écarte les autres)
         plt.figure(figsize(10, 8))
 
         # Titre du graphique
         plt.title("Représentation Graphique D'une fourmilière")
 
         # Layout du graphique spring plus lisible pour fourmilière minimise les croisements et éparpille les salles
-        nx.draw_spring(G, with_labels=True)
+        nx.draw_spring(self.antHillGraph, with_labels=True)
 
         # Affiche le graphique après execution de la console
         plt.show()
