@@ -26,23 +26,21 @@ class AntHill:
         self.totalRooms = None
         self.totalAnt = None
         self.totalTunnels = None
-        self.rooms = None
-        self.tunnels = None
+        self.rooms = []
+        self.tunnels = []
         self.neighbors = []
 
         """
             Fonction de nettoyage des données appelée dans le constructeur permet de récupérer les éléments:
             - Nombre de fourmis
-            - Salles de la fourmilière
-            - Tunnels entre les différentes salles de la fourmilière )
+            - Salles de la fourmilière et leurs emplacements
+            - Tunnels entre les différentes salles de la fourmilière
             Et de les set dynamiquement dans les attributs de la fourmilière
             (Clean Data)
         """
         def set_hill():
 
             file = re.split('\n', self.antHillFile)
-            rooms = []
-            tunnels = []
 
             # Récupère le nombre de fourmis et retire la ligne correspondante
             if file[0][0] == "F":
@@ -52,34 +50,44 @@ class AntHill:
                 self.totalAnt = int(file[0].removeprefix("f="))
                 file.pop(0)
             # Condition permettant de palier au problème d'encodage du fichier en base 10 ajoute un
+
             # Tableau suplémentaire vide en fin de fichier après nettoyage
             if not file[-1]:
                 file.pop()
 
             # La salle 0 correspond au vestibule
-            rooms.append(0)
+            self.rooms.append(0)
+            # Pour chaque ligne du fichier fournis
             for el in file:
+                # Règle définissant la ligne concernant les salles
                 if len(el) == 2 or len(el) == 3 or "{" in el or "}" in el:
                     el = re.sub("S|}|", "", el)
                     el = re.sub(" ", "", el)
-                    el = re.sub("{", ", ", el)
-                    rooms.append(el)
-            # Récupère le nombre de tunnels/relations entre les salles dans un tableau
+                    el = re.sub("{", ",", el)
+                    # Sépare les salle de leurs emplacements dans un tableau
+                    splitRoom = el.split(",")
+                    # Si longueur du split est de 1 alors pas d'emplacement spécifier donc 1 (consigne)
+                    if len(splitRoom) == 1:
+                        print("TEST", splitRoom)
+                        self.rooms.append((int(splitRoom[0]), 1))
+                    # Si emplacement len == 2 donc ajoute un tuple d'int (salle, emplacement)
+                    else:
+                        print("SPLITED", splitRoom)
+                        print("TEST2", splitRoom[0], splitRoom[1])
+                        self.rooms.append((int(splitRoom[0]), int(splitRoom[1])))
+            # Si ce n'est pas une salle c'est un tunnel donc ajoute le tunnel dans un tableau
                 else:
-                    tunnels.append(el)
-            # Après avoir ajouté toute les salle ajoute une salle en plus dynamiquement correspondant au dortoir
-            rooms.append(len(rooms) + 1)
-            # Set le nombre de salles (sommets du graphe)
-            self.totalRooms = len(rooms)
-            # Chemins/porte (arête du graphe)
-            self.totalTunnels = len(tunnels)
-            # Set les différentes salles ainsi que leurs emplacement dans un tableau
-            self.rooms = rooms
-            # Set les différentes relations entre les salles dans un tableau
-            self.tunnels = tunnels
+                    self.tunnels.append(el)
+            # Après avoir ajouté toutes les salles ajoute une salle en plus dynamiquement correspondante au dortoir
+            self.rooms.append(len(self.rooms))
+            print("ROOMS", self.rooms)
+            # Set le nombre de salles dans l'attribut totalRooms
+            self.totalRooms = len(self.rooms)
+            # Set le nombre total de tunnel dans l'attribut totalTunnels
+            self.totalTunnels = len(self.tunnels)
 
         """
-            Execute les fonctions de nettoyage des données dans le constructeur et initialise la fourmilière.
+            Execute la fonction de nettoyage des données dans le constructeur et initialise la fourmilière.
         """
         set_hill()
 
@@ -107,6 +115,9 @@ class AntHill:
 
         # Permet l'ajout dynamique de plusieurs noeuds (verticles) dans le graphe nx
         self.antHillGraph.add_nodes_from(H)
+
+        print("Liste des nodes", self.antHillGraph.nodes)
+        print("Liste des rooms", self.rooms)
 
         # Le nettoyage de la liste de tuples contenu dans neighbors permet l'insertion de toutes les relations
         # (edges) directement dans la methode ci dessous.
@@ -151,7 +162,7 @@ class AntHill:
 
     def print_anthill_data(self):
         print(f"\nNombre de fourmis: {self.totalAnt}.")
-        print(f"\nNombre de salles et leurs emplacements {self.antHillGraph.nodes.data()}.")
+        print(f"\nListe des salles et leurs emplacements {self.antHillGraph.nodes.data()}.")
         print(f"\nNombre de tunnels {self.antHillGraph.edges}.")
         print(f"\nListe des tunnels de la fourmilière: {self.antHillGraph.edges.data()}")
 
