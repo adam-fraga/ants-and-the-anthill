@@ -2,7 +2,6 @@ import re
 import numpy as np
 
 from classes.antHillClass import AntHill
-from classes.swarmClass import Swarm
 
 # Just for fun
 print(" \n\n Bienvenue dans votre générateur de fourmilière! \n\n")
@@ -16,6 +15,7 @@ print("  /(_)\\", "  /(_)\\", "  /(_)\\ \n\n")
     Récupère ainsi dynamiquement:
     Le nombre de fourmis, Le nombre de salle, Les emplacements des salles ainsi que les relations entres celle ci.
 """
+
 
 # Récupère le nom du fichier
 fileName = str(input("Entrer le nom du fichier matérialisant les relations de votre fourmilière.\n\n !!!ATTENTION!!!\n\nVotre fichier doit se trouver dans le dossier anthill, être au format .txt, se nommer \"fourmiliere_x.txt \",\npour x le nombre de la fourmilière en toutes lettre, et répondre aux normes imposés.\n(Voir les éxemples de fourmilière présentent dans le dossier anthill.)\n"))
@@ -35,16 +35,10 @@ except Exception as e:
 # Init la fourmiliere
 hill = AntHill(strFile)
 
-# Initi de l'essaim de fourmis
-swarm = Swarm()
-
 # Initialise les cellules voisine dans un tableau de tuples (int, int)
 hill.set_neighbors()
 
-# Initialise une matrice booléenne représentative de la fourmiliere
-hill.set_anthill_matrice()
-
-# Initialise  un objet networkX representatif de la fourmilière
+# Initialise le graphe de la fourmilière avec networkX
 hill.set_anthill_graph()
 
 # Déssine les salles de la fourmilière ainsi que leur tunnels
@@ -53,8 +47,4 @@ hill.draw_anthill()
 # Affiche les information concernant les Salles de la foumilière
 hill.print_anthill_data()
 
-# Affiche la matrice de la fourmilière
-hill.print_anthill_matrice()
-
-# Bfs
-swarm.get_fastest_way(hill.antHillMatrice, hill.antHillGraph)
+hill.get_way()

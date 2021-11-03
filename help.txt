@@ -27,7 +27,7 @@
 ------------------------------------------------------RECAP énoncé-------------------------------------------
     F Fourmis (variable) -> nombre entier 
     Les salles sont les sommets du graphe
-    Le vestibule: Sv (Contient toute les fourmis de départ)
+    Le vestibule: Sv (Contient toutes les fourmis de départ)
     Le dortoir: Sd (Peux contenir toutes les fourmis )
     Les salles intermediaires S1 S2... pouvant acccueilir une seule fourmis
 
@@ -35,7 +35,7 @@
     TOUTES les fourmis F doivent rejoindre le dortoir Sd
 
     CONTRAINTES:
-    Les fourmis se déplaceent à la même vitesse.
+    Les fourmis se déplacent à la même vitesse.
     Les salles de la fourmiière ne peuvent accueillir qu'une seule fourmi à la fois 
     (en dehors du vestibule et du dortoir) sauf si spécifié autrement.
     Une fourmi ne peut s'engager dans un tunnel que si la salle de destination est vide ou si la fourmi

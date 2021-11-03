@@ -1,10 +1,10 @@
-from IPython.core.pylabtools import figsize
 import numpy as np
 import copy as cp
 import matplotlib.pyplot as plt
 import networkx as nx
 import re
 
+from classes.anthClass import Anth
 
 """
     Class fourmilière / Anthill Class
@@ -18,11 +18,11 @@ class AntHill:
         Cette approche permet ainsi de rendre l'objet Anthill adaptable et ce peu importe la fourmilière passé paramètre.
         Permet également l'ajout de nouvelles fourmilières dans le dossier anthill.
     """
-    def __init__(self, anthillDotTxt: str) -> None:
+    def __init__(self, fileTxt: str) -> None:
 
         self.antHillMatrice = []
         self.antHillGraph = nx.Graph()
-        self.antHillFile = anthillDotTxt
+        self.antHillFile = fileTxt
         self.totalRooms = None
         self.totalAnt = None
         self.totalTunnels = None
@@ -108,56 +108,22 @@ class AntHill:
     def set_anthill_graph(self):
         # Itère sur la liste de tuple (room, emplacement)
         for room in self.rooms:
-            # Si il s'agit du dortoit ou du vestibule ajoute simplement la salle dans un node ntwrkx
+            # Si il s'agit du dortoir ou du vestibule ajoute simplement la salle dans un node ntwrkx
+            # Et definit "infinite" dans slot (nombre de places)
             if room == 0 or room == (self.totalRooms - 1):
-                self.antHillGraph.add_node(room)
+                self.antHillGraph.add_node(room, slot="infinite", anths=[])
             # Sinon ajoute un attribut slot materialisant le nombre de places disponibles dans chaque salle
             else:
-                self.antHillGraph.add_node(room[0], slot=room[1])
-
-        print("Liste des nodes", self.antHillGraph.nodes)
-        print("Liste des rooms", self.rooms)
+                self.antHillGraph.add_node(room[0], slot=room[1], anths=[])
 
         # Neighbors contenant une liste de tuples qui materialise la relation entre les salles
         # Passe cette liste à la methode suivante pour définir les edges.
         self.antHillGraph.add_edges_from(self.neighbors)
 
     """
-        Initialise une matrice booléenne correspondant à la fourmilière passé en paramètre,
-        de salles * salles. (Correspond au graphe de la fourmilière sous forme de matrice)
-        Les 0 et 1 materialise les liaisons entre les salles 1 = salle connecté, 0 = Pas de connexion.
+        Affiche les informations de la fourmilière:
+        Nombre d'individus, nombre de salles et leurs emplacements, nombre de tunnel et leurs liaisons...
     """
-    def set_anthill_matrice(self):
-        # Créer une matrice de salle * salle rempli de zero
-        self.antHillMatrice = np.zeros((self.totalRooms, self.totalRooms))
-
-        # Parcourt la matrice et initialise 1 si 2 salles sont voisine en vérifiant dans le
-        # Tableau de tuples initialiser au préalable (neighbors)
-        for x in range(self.totalRooms):
-            for y in range(self.totalRooms):
-                # print("x, y: ", (x, y))
-                # print("Position courante", self.antHillMatrice[x][y])
-                for n in self.neighbors:
-                    if x == n[0] and y == n[1]:
-                        self.antHillMatrice[x][y] = 1
-        print("Félicitation! Votre fourmilière à bien été générée!")
-        print("Presser une touche de votre clavier pour afficher le graphique de la fourmilière!")
-        input()
-
-    """
-        Affiche la matrice booléenne représentative de la fourmilière
-    """
-    def print_anthill_matrice(self):
-        print()
-        print("Matrice booléenne de la fourmilière")
-        for row in self.antHillMatrice:
-            print(row)
-        print()
-
-        """
-            Affiche les informations de la fourmilière:
-            Nombre d'individus, nombre de salles et leurs emplacements, nombre de tunnel et leurs liaisons...
-        """
 
     def print_anthill_data(self):
         print(f"\nNombre de fourmis: {self.totalAnt}.")
@@ -170,9 +136,6 @@ class AntHill:
     """
     def draw_anthill(self):
 
-        # Choix du spring pour plus de visibilité (positionne les noeuds lié plus proche et écarte les autres)
-        plt.figure(figsize(10, 8))
-
         # Titre du graphique
         plt.title("Représentation Graphique D'une fourmilière")
 
@@ -181,3 +144,27 @@ class AntHill:
 
         # Affiche le graphique après execution de la console
         plt.show()
+
+    def get_way(self) -> None:
+
+        # Graphe networkX
+        G = self.antHillGraph
+
+        # Définit les nodes vestibule et dortoire dans des variables
+        vs = G.nodes[0]
+        sd = G.nodes[len(G.nodes) - 1]
+
+        # Les fourmis entrent dans le vestibule
+        for x in range(self.totalAnt):
+            anth_id = 1
+            anth = Anth(anth_id)
+            vs["anths"].append(anth)
+            anth_id += 1
+
+        # Set les salles à non visités
+        for n in G.nodes():
+            G.nodes[n]["visited"] = False
+            print("Noeuds du graphes", G.nodes[n])
+            print("EDGES", G[n])
+
+        print("ADJACENTS", G.adj)
