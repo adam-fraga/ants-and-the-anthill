@@ -1,3 +1,4 @@
+from networkx.classes.function import neighbors
 import numpy as np
 import copy as cp
 import matplotlib.pyplot as plt
@@ -5,6 +6,7 @@ import networkx as nx
 import re
 
 from classes.anthClass import Anth
+from classes.queueClass import Queue
 
 """
     Class fourmilière / Anthill Class
@@ -108,16 +110,14 @@ class AntHill:
     def set_anthill_graph(self):
         # Itère sur la liste de tuple (room, emplacement)
         for room in self.rooms:
-            # Si il s'agit du dortoir ou du vestibule ajoute simplement la salle dans un node ntwrkx
-            # Et definit "infinite" dans slot (nombre de places)
+            # Definit les différents attributs utilitaire à la gestion des salles pour VS et SD dans le grap
             if room == 0 or room == (self.totalRooms - 1):
-                self.antHillGraph.add_node(room, slot="infinite", anths=[])
-            # Sinon ajoute un attribut slot materialisant le nombre de places disponibles dans chaque salle
+                self.antHillGraph.add_node(room, visited=False, slot="infinite", ants=[], dist=None)
+            # Definit les attributs utilitaire pour le reste des salles dans le graphe
             else:
-                self.antHillGraph.add_node(room[0], slot=room[1], anths=[])
+                self.antHillGraph.add_node(room[0], visited=False, slot=room[1], ants=[], dist=None)
 
-        # Neighbors contenant une liste de tuples qui materialise la relation entre les salles
-        # Passe cette liste à la methode suivante pour définir les edges.
+        # Passe la liste de tuples correspondant aux voisins pour définir les tunnels (edges) du graphe
         self.antHillGraph.add_edges_from(self.neighbors)
 
     """
@@ -145,26 +145,67 @@ class AntHill:
         # Affiche le graphique après execution de la console
         plt.show()
 
-    def get_way(self) -> None:
+    def get_shortest_way(self) -> None:
 
         # Graphe networkX
         G = self.antHillGraph
+        relations = []
+        # Compteur de distance
+        dist = 0
 
-        # Définit les nodes vestibule et dortoire dans des variables
-        vs = G.nodes[0]
-        sd = G.nodes[len(G.nodes) - 1]
 
-        # Les fourmis entrent dans le vestibule
-        for x in range(self.totalAnt):
-            anth_id = 1
-            anth = Anth(anth_id)
-            vs["anths"].append(anth)
-            anth_id += 1
+        # Parcourt les salles de la fourmilière
+        for i in G.nodes():
+            print("IIIIII", i)
 
-        # Set les salles à non visités
-        for n in G.nodes():
-            G.nodes[n]["visited"] = False
-            print("Noeuds du graphes", G.nodes[n])
-            print("EDGES", G[n])
+            # Vestibule
+            if i == 0:
+                print("Vestibule")
 
-        print("ADJACENTS", G.adj)
+                # Définit la distance du vestibule (départ à 0 de lui même)
+                G.nodes[0]["dist"] = dist
+                G.nodes[0]["visited"] = True
+
+                # Ajoute dans un dictionnaire les relation parenté entre les salles ainsi que leur distance
+                relation = {"Room": i, "Neighbors": [x for x in list(G.neighbors(i))], "Distance": dist}
+                relations.append(relation)
+
+                # Passe la distance à 1 pour les cases suivantes
+                dist = 1
+
+            else:
+                print("SALLE", i)
+                # Si la salle n'est pas visité et qu'il ne s'agit pas du vestibule
+                if G.nodes[i]["visited"] is not True:
+                    print("La salle n'est pas encore visité")
+
+                    # Ajoute dans un dictionnaire les relation parenté entre les salles ainsi que leur distance
+                    relation = {"Room": i, "Neighbors": [x for x in list(G.neighbors(i))], "Distance": dist}
+                    relations.append(relation)
+
+                    # Pour chaque voisins le définit comme visité si non visité et définit sa distance vis à vis de VS
+                    # Puis le stock dans une file.
+                    for n in list(G.neighbors(i)):
+                        print("Pour le voisin", n)
+                        G.nodes[n]["dist"] = dist
+                        G.nodes[n]["visited"] = True
+
+                    # Augmente la distance de 1
+                    dist += 1
+
+                    # Debug affiche la file
+            print("Tableau de salle parentes", relations)
+            input()
+
+        # print("G de n", G.nodes[i])
+        # print("ADJACENTS", G.adj)
+
+
+# For room in graphe parcourt room
+    # Définit la distance de la premiere case à 0 car 0 d'elle même et la set comme visité
+    # Vérifie tout les voisins (NON VISITés) de la case courante les définit a distance 1
+    # Les définit comme visités
+    # Les enregistre dans une File (Node et arêtes)
+    # Les definit comme étant visité et les ajoutent dans la file
+    # Vérifie les voisins de toute les cases à distance 1 traités précédement
+    # Leur applique une distance de 2, les définit comme visités, les enregistre dans une file etc...

@@ -47,4 +47,4 @@ hill.draw_anthill()
 # Affiche les information concernant les Salles de la foumilière
 hill.print_anthill_data()
 
-hill.get_way()
+hill.get_shortest_way()
